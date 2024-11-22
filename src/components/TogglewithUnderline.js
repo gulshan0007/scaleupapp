@@ -1,0 +1,83 @@
+import React, { useState } from 'react';
+import { TouchableOpacity, Text, StyleSheet, View } from 'react-native';
+
+const ToggleWithUnderline = ({
+    options = ['Option 1', 'Option 2', 'Option 3'], // Toggle options
+    selectedTextColor = '#fbc02d', // Selected text color
+    unselectedTextColor = '#808080', // Unselected text color (gray)
+    selectedUnderlineColor = '#fbc02d', // Selected underline color
+    unselectedUnderlineColor = '#d3d3d3', // Unselected underline color (light gray)
+    selectedUnderlineHeight = 4, // Thickness of selected underline
+    unselectedUnderlineHeight = 1, // Thickness of unselected underline
+    onToggle = () => { }, // Callback for toggle change
+}) => {
+    const [selected, setSelected] = useState(0);
+
+    const handleToggle = (index) => {
+        setSelected(index);
+        onToggle(index);
+    };
+
+    return (
+        <View style={styles.container}>
+            {options.map((option, index) => {
+                const isSelected = index === selected;
+                return (
+                    <TouchableOpacity
+                        key={index}
+                        style={styles.toggle}
+                        onPress={() => handleToggle(index)}
+                        activeOpacity={0.8}
+                    >
+                        <Text
+                            style={[
+                                styles.text,
+                                { color: isSelected ? selectedTextColor : unselectedTextColor },
+                            ]}
+                        >
+                            {option}
+                        </Text>
+                        <View
+                            style={[
+                                styles.underline,
+                                {
+                                    backgroundColor: isSelected
+                                        ? selectedUnderlineColor
+                                        : unselectedUnderlineColor,
+                                    height: isSelected
+                                        ? selectedUnderlineHeight
+                                        : unselectedUnderlineHeight,
+                                },
+                            ]}
+                        />
+                    </TouchableOpacity>
+                );
+            })}
+        </View>
+    );
+};
+
+const styles = StyleSheet.create({
+    container: {
+        flexDirection: 'row',
+        justifyContent: 'space-evenly',
+        alignItems: 'center',
+        borderRadius: 10,
+    },
+    toggle: {
+        flex: 1, // Each toggle takes equal space
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingVertical: 10,
+    },
+    text: {
+        fontSize: 16,
+        fontWeight: '500',
+        marginBottom: 4, // Space between text and underline
+    },
+    underline: {
+        width: '100%', // Full width underline
+    },
+});
+
+export default ToggleWithUnderline;
