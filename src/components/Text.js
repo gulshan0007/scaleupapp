@@ -21,7 +21,7 @@ const useTextVariants = () => {
         medium12: {
             fontSize: nh(12),
             fontFamily: APP_FONTS.PoppinsMedium,
-            lineHeight: scale(18),
+            lineHeight: nh(18),
             letterSpacing: nw(0.3),
             fontWeight: '500',
 
@@ -29,7 +29,7 @@ const useTextVariants = () => {
         medium14: {
             fontSize: nh(14),
             fontFamily: APP_FONTS.PoppinsMedium,
-            lineHeight: scale(21),
+            lineHeight: nh(21),
             letterSpacing: nw(0.25),
             fontWeight: '500',
 
@@ -37,14 +37,14 @@ const useTextVariants = () => {
         semibold12: {
             fontSize: nh(12),
             fontFamily: APP_FONTS.PoppinsSemiBold,
-            lineHeight: scale(18),
+            lineHeight: nh(18),
             letterSpacing: nw(0.3),
             fontWeight: '600',
         },
         semibold14: {
             fontSize: nh(14),
             fontFamily: APP_FONTS.PoppinsSemiBold,
-            lineHeight: scale(21),
+            lineHeight: nh(21),
             letterSpacing: nw(0.3),
             fontWeight: '600',
         },
@@ -52,21 +52,21 @@ const useTextVariants = () => {
         semibold18: {
             fontSize: nh(18),
             fontFamily: APP_FONTS.PoppinsSemiBold,
-            lineHeight: scale(27),
+            lineHeight: nh(27),
             letterSpacing: nw(0.15),
             fontWeight: '600',
         },
         semibold20: {
             fontSize: nh(20),
             fontFamily: APP_FONTS.PoppinsSemiBold,
-            lineHeight: scale(30),
+            lineHeight: nh(30),
             letterSpacing: nw(0.15),
             fontWeight: '600',
         },
         bold20: {
             fontSize: nh(20),
             fontFamily: APP_FONTS.PoppinsBold,
-            lineHeight: scale(30),
+            lineHeight: nh(30),
             letterSpacing: nw(0.15),
             fontWeight: '700',
         },
