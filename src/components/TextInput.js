@@ -5,115 +5,139 @@ import {
     Text,
     StyleSheet,
     TouchableOpacity,
+    Image,
 } from 'react-native';
+import { nh, nw } from '../helper/scal.utils';
+import { COLORS } from '../helper/colors';
+import { APP_FONTS } from '../assets/fonts';
+import { icons } from '../assets/icons';
 
 const CustomTextInput = ({
     placeholder = 'Enter text', // Placeholder text
     value,
     onChangeText,
-    onFocus = () => { }, // Callback when input is focused
-    onBlur = () => { }, // Callback when input loses focus
-    hasError = false, // Error state
     errorMessage = '', // Error message (icon + text)
     successMessage = '', // Success message (icon + text)
-    isSuccess = false, // Success state
     rightIcon, // Component for the right-side icon
     onRightIconPress = () => { }, // Callback for right icon press
+    marginBottom = 15,
+    dropDown = false
 }) => {
-    const [isFocused, setIsFocused] = useState(false);
-
-    // Dynamic outline color based on focus, error, and success
-    const getOutlineColor = () => {
-        if (hasError) return '#FF4D4D'; // Red for error
-        if (isSuccess) return '#4CAF50'; // Green for success
-        return isFocused ? '#4CAF50' : '#CCCCCC'; // Green when focused, gray otherwise
-    };
-
+    const [selectedCountry, setSelectedCountry] = useState({ name: 'India', flag: '🇮🇳', code: '+91' },);
     return (
-        <View style={styles.container}>
+        <View >
             {/* Input field */}
             <View
                 style={[
                     styles.inputContainer,
                     {
-                        borderColor: getOutlineColor(),
-                        shadowColor: isFocused ? '#4CAF50' : '#000',
+                        marginBottom: marginBottom
+
                     },
                 ]}
             >
+                {/* Country Dropdown */}
+                {dropDown && <TouchableOpacity
+                    style={styles.countryDropdown}
+                // onPress={() => setModalVisible(true)}
+                >
+                    <Text style={styles.flagIcon}>{selectedCountry.flag}</Text>
+
+                </TouchableOpacity>
+
+                }
                 <TextInput
                     style={styles.input}
                     placeholder={placeholder}
                     value={value}
                     onChangeText={onChangeText}
-                    onFocus={() => {
-                        setIsFocused(true);
-                        onFocus();
-                    }}
-                    onBlur={() => {
-                        setIsFocused(false);
-                        onBlur();
-                    }}
-                    placeholderTextColor="#888"
+                    placeholderTextColor={COLORS.grey999999}
+
+
                 />
                 {rightIcon && (
-                    <TouchableOpacity onPress={onRightIconPress} style={styles.icon}>
-                        {rightIcon}
+                    <TouchableOpacity onPress={onRightIconPress} >
+                        <Image source={rightIcon} style={styles.icon} />
                     </TouchableOpacity>
                 )}
             </View>
 
             {/* Error or Success Message */}
-            {(hasError || isSuccess) && (
-                <View style={styles.messageContainer}>
-                    {hasError ? (
-                        <Text style={styles.errorMessage}>{errorMessage}</Text>
-                    ) : (
-                        <Text style={styles.successMessage}>{successMessage}</Text>
-                    )}
-                </View>
+            {(errorMessage || successMessage) && (
+
+                errorMessage ? (
+                    <Text style={styles.errorMessage}>{errorMessage}</Text>
+                ) : (
+                    <Text style={styles.successMessage}>{successMessage}</Text>
+                )
             )}
         </View>
     );
 };
 
 const styles = StyleSheet.create({
-    container: {
-        marginVertical: 10,
-    },
+
     inputContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        paddingHorizontal: 10,
+        paddingLeft: nw(20),
+        paddingRight: nw(10),
+        paddingTop: 5,
+
         borderWidth: 1,
-        borderRadius: 8,
-        backgroundColor: '#FFF',
-        elevation: 5, // Shadow for Android
-        shadowOffset: { width: 0, height: 2 }, // Shadow for iOS
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
+        borderRadius: nh(10),
+        height: nh(40),
+        backgroundColor: COLORS.whiteFFFFFF,
+        borderColor: 'rgba(214, 214, 214, 0.2)',
+        boxShadow: '2 2 5 0 rgba(0, 0, 0, 0.1)',
+
     },
     input: {
         flex: 1,
-        height: 50,
-        fontSize: 16,
+        alignItems: "center",
+
+
+        height: nh(40),
+        fontSize: nh(12),
         color: '#000',
+        fontFamily: APP_FONTS.PoppinsMedium
+    },
+
+
+    errorMessage: {
+        marginTop: -5,
+        color: COLORS.redEA4335,
+        fontSize: nh(12),
+        fontFamily: APP_FONTS.PoppinsMedium,
+        textAlign: 'right',
+        marginBottom: nh(10)
+
+    },
+
+    successMessage: {
+        marginTop: -5,
+        color: COLORS.green34A853,
+        fontSize: nh(12),
+        fontFamily: APP_FONTS.PoppinsSemiBold,
+        textAlign: 'right',
+        marginBottom: nh(10)
     },
     icon: {
-        marginLeft: 10,
+        height: nh(20), width: nw(20)
     },
-    messageContainer: {
-        marginTop: 5,
+    countryDropdown: {
         flexDirection: 'row',
         alignItems: 'center',
+        marginRight: nw(10),
+        marginLeft: nw(-13),
+        borderRightWidth: 1,
+        borderColor: '#ddd',
+
     },
-    errorMessage: {
-        color: '#FF4D4D',
-        fontSize: 14,
-    },
-    successMessage: {
-        color: '#4CAF50',
-        fontSize: 14,
+    flagIcon: {
+        fontSize: 25,
+        marginRight: nw(15),
+        marginTop: -5
     },
 });
 

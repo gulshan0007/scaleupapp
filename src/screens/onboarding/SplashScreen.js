@@ -4,7 +4,7 @@ import { COLORS } from '../../helper/colors';
 import { images } from '../../assets/images';
 import { DEVICE_WIDTH, nh, nw } from '../../helper/scal.utils';
 
-const SplashScreen = () => {
+const SplashScreen = ({ navigation }) => {
     const scaleAnim = useRef(new Animated.Value(0)).current; // Circle scaling animation
     const fadeAnim = useRef(new Animated.Value(0)).current; // Text fading animation
 
@@ -23,6 +23,12 @@ const SplashScreen = () => {
             }).start();
         });
     }, [scaleAnim, fadeAnim]);
+
+    useEffect(() => {
+        setTimeout(() => {
+            navigation.navigate('OnboardingScreen')
+        }, 3000);
+    }, [])
 
     return (
         <View style={styles.container}>
