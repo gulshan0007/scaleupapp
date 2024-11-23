@@ -1,5 +1,11 @@
 import React, {useState} from 'react';
-import {StyleSheet, SafeAreaView, StatusBar, View} from 'react-native';
+import {
+  StyleSheet,
+  SafeAreaView,
+  StatusBar,
+  View,
+  Text as RNText,
+} from 'react-native';
 import {COLORS} from '../../helper/colors';
 import {nh, nw} from '../../helper/scal.utils';
 import Text from '../../components/Text';
@@ -9,9 +15,79 @@ import {CheckBox} from 'react-native-elements';
 import Button from '../../components/Button';
 import SocialLogin from '../../components/socialauth';
 import {APP_FONTS} from '../../assets/fonts';
+import Routes from '../../helper/routes';
+import {useToast} from '../../components/CustomToast';
+import {registerApi} from '../../services/apiService';
 
 const SignUp = ({navigation, route}) => {
+  const {showToast} = useToast();
   const [isChecked, setIsChecked] = useState(false);
+  const [userName, setUserName] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [secureText, setSecureText] = useState(true);
+  const [secureText1, setSecureText1] = useState(true);
+
+  const callRegApi = async params => {
+    try {
+      const {data} = await registerApi(params);
+      showToast({type: 'success', title: data?.message});
+      navigation.navigate(Routes.Login);
+      setEmail('');
+      setFirstName('');
+      setLastName('');
+      setUserName('');
+      setPassword('');
+      setConfirmPassword('');
+    } catch (error) {
+      console.log('🚀 ~ callRegApi ~ error:', error);
+    }
+  };
+
+  const registerUser = () => {
+    let emailRegex =
+      /^[a-zA-Z0-9.!#$%&'*+/=?^_{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+    let testedEmail = emailRegex.test(email);
+    let passwordRegex =
+      /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
+    let testPassword = passwordRegex.test(password);
+
+    if (userName === '') {
+      showToast({title: 'Please Enter UserName'});
+    } else if (email === '') {
+      showToast({title: 'Please Enter email.'});
+    } else if (!testedEmail) {
+      showToast({title: 'Please Enter valid email address'});
+    } else if (phone === '') {
+      showToast({title: "Phone number can't be empty"});
+    } else if (phone.length !== 10) {
+      showToast({title: 'Phone number must be valid'});
+    } else if (password === '') {
+      showToast({title: 'Please Enter Password.'});
+    } else if (!testPassword) {
+      showToast({
+        title:
+          'Password must be at least 8 characters long, include one letter, one number, and one special character.',
+      });
+    } else if (password !== confirmPassword) {
+      showToast({title: 'Passwords do not match.'});
+    } else if (!isChecked) {
+      showToast({title: 'Please agree to the terms.'});
+    } else {
+      const data = {
+        username: userName,
+        email: email,
+        password: password,
+        // firstname: firstName,
+        // lastname: lastName,
+        phoneNumber: phone,
+      };
+      callRegApi(data);
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       {/* StatusBar */}
@@ -33,16 +109,42 @@ const SignUp = ({navigation, route}) => {
             style={{marginBottom: nh(30)}}>
             Sign-up now
           </Text>
-          <CustomTextInput placeholder="Username" errorMessage="" />
-          <CustomTextInput placeholder="Email" />
-          {/* for slecting country not added dropdown as we dont have idea for how many country app will be */}
-          <CustomTextInput dropDown={true} placeholder="Mobile No" />
-          <CustomTextInput placeholder="Password" rightIcon={icons.hide} />
+
+          <CustomTextInput
+            placeholder="Username"
+            value={userName}
+            onChangeText={setUserName}
+          />
+          <CustomTextInput
+            placeholder="Email"
+            value={email}
+            onChangeText={setEmail}
+          />
+          <CustomTextInput
+            dropDown={true}
+            placeholder="Mobile No"
+            value={phone}
+            onChangeText={setPhone}
+            keyboardType="number-pad"
+          />
+          <CustomTextInput
+            placeholder="Password"
+            value={password}
+            onChangeText={setPassword}
+            onRightIconPress={() => setSecureText(!secureText)}
+            rightIcon={secureText ? icons.hide : icons.unhide}
+            secureTextEntry={secureText}
+          />
           <CustomTextInput
             placeholder="Confirm Password"
-            rightIcon={icons.hide}
+            value={confirmPassword}
+            onChangeText={setConfirmPassword}
+            onRightIconPress={() => setSecureText1(!secureText1)}
+            rightIcon={secureText1 ? icons.hide : icons.unhide}
             marginBottom={10}
+            secureTextEntry={secureText1}
           />
+
           <View style={styles.container1}>
             {/* Checkbox */}
             <CheckBox
@@ -57,20 +159,16 @@ const SignUp = ({navigation, route}) => {
             />
 
             {/* Label */}
-
             <Text
               variant="medium12"
               color={COLORS.blue043142}
               style={{marginTop: -3}}>
               I agree to{' '}
             </Text>
-
             <Text
               variant="bold12"
               color={COLORS.yellowF5BE00}
-              style={{marginTop: -4}}
-              // onPress={onTermsPress}
-            >
+              style={{marginTop: -4}}>
               Terms of Service{' '}
             </Text>
             <Text
@@ -82,13 +180,14 @@ const SignUp = ({navigation, route}) => {
             <Text
               variant="bold12"
               color={COLORS.yellowF5BE00}
-              // onPress={onPrivacyPress}
               style={{marginTop: -4}}>
               Privacy Policy
             </Text>
           </View>
-          <Button text="Sign up" />
+
+          <Button text="Sign up" onPress={registerUser} />
           <SocialLogin />
+
           <View
             style={{
               position: 'absolute',
@@ -107,14 +206,15 @@ const SignUp = ({navigation, route}) => {
               }}>
               Already have an account!{' '}
             </Text>
-            <Text
+            <RNText
+              onPress={() => navigation.navigate(Routes.Login)}
               style={{
                 color: COLORS.yellowF5BE00,
                 fontSize: nh(12),
                 fontFamily: APP_FONTS.PoppinsMedium,
               }}>
               Login
-            </Text>
+            </RNText>
           </View>
         </View>
       </View>

@@ -1,5 +1,12 @@
-import React, {useState} from 'react';
-import {StyleSheet, SafeAreaView, StatusBar, View, Image} from 'react-native';
+import React from 'react';
+import {
+  StyleSheet,
+  SafeAreaView,
+  StatusBar,
+  View,
+  Image,
+  Text as RNText,
+} from 'react-native';
 import {COLORS} from '../../helper/colors';
 import {nh, nw} from '../../helper/scal.utils';
 import Text from '../../components/Text';
@@ -7,6 +14,7 @@ import CustomTextInput from '../../components/TextInput';
 import Button from '../../components/Button';
 import {APP_FONTS} from '../../assets/fonts';
 import {images} from '../../assets/images';
+import Routes from '../../helper/routes';
 
 const ForgotPassword = ({navigation, route}) => {
   return (
@@ -54,14 +62,15 @@ const ForgotPassword = ({navigation, route}) => {
               }}>
               Back to{' '}
             </Text>
-            <Text
+            <RNText
+              onPress={() => navigation.navigate(Routes.Login)}
               style={{
                 color: COLORS.yellowF5BE00,
                 fontSize: nh(12),
                 fontFamily: APP_FONTS.PoppinsMedium,
               }}>
               Login
-            </Text>
+            </RNText>
           </View>
         </View>
       </View>
