@@ -6,6 +6,7 @@ import {
   View,
   Image,
   TouchableOpacity,
+  Text as RNText,
 } from 'react-native';
 import {COLORS} from '../../helper/colors';
 import {nh, nw} from '../../helper/scal.utils';
@@ -164,14 +165,15 @@ const Login = ({navigation, route}) => {
               }}>
               Don’t have an account!{' '}
             </Text>
-            <Text
+            <RNText
               style={{
                 color: COLORS.yellowF5BE00,
                 fontSize: nh(12),
                 fontFamily: APP_FONTS.PoppinsMedium,
-              }}>
+              }}
+              onPress={() => navigation.navigate('SignUp')}>
               Sign up
-            </Text>
+            </RNText>
           </View>
         </View>
       </View>

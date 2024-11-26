@@ -12,4 +12,7 @@ export const images = {
   forgot: require('../images/forgot.png'),
   set: require('../images/set.png'),
   verify: require('../images/verify.png'),
+  preference1: require('../images/preference1.png'),
+  preference2: require('../images/preference2.png'),
+  preference3: require('../images/preference3.png'),
 };

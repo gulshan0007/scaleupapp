@@ -11,6 +11,8 @@ import SignUp from './screens/Signup/Signup';
 import Login from './screens/Login/Login';
 import ForgotPassword from './screens/Login/ForgotPassword';
 import Verification from './screens/Login/Verification';
+import Preferences from './screens/Preferences/Preferences';
+import SetNewPassword from './screens/Login/SetNewPassword';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -48,6 +50,16 @@ const LoginNavigator = () => {
       <LoginStack.Screen
         name={'Verification'}
         component={Verification}
+        options={{headerShown: false}}
+      />
+      <LoginStack.Screen
+        name={'Preferences'}
+        component={Preferences}
+        options={{headerShown: false}}
+      />
+      <LoginStack.Screen
+        name={'SetNewPassword'}
+        component={SetNewPassword}
         options={{headerShown: false}}
       />
     </LoginStack.Navigator>

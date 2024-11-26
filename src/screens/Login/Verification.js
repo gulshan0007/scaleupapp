@@ -1,5 +1,12 @@
 import React, {useState} from 'react';
-import {StyleSheet, SafeAreaView, StatusBar, View, Image} from 'react-native';
+import {
+  StyleSheet,
+  SafeAreaView,
+  StatusBar,
+  View,
+  Image,
+  Text as RNText,
+} from 'react-native';
 import {COLORS} from '../../helper/colors';
 import {nh, nw} from '../../helper/scal.utils';
 import Text from '../../components/Text';
@@ -58,7 +65,10 @@ const Verification = ({navigation, route}) => {
             </Text>
           </View>
 
-          <Button text={'Reset password'} />
+          <Button
+            text={'Reset password'}
+            onPress={() => navigation.navigate('SetNewPassword')}
+          />
 
           <View
             style={{
@@ -78,14 +88,15 @@ const Verification = ({navigation, route}) => {
               }}>
               Back to{' '}
             </Text>
-            <Text
+            <RNText
+              onPress={() => navigation.navigate('Login')}
               style={{
                 color: COLORS.yellowF5BE00,
                 fontSize: nh(12),
                 fontFamily: APP_FONTS.PoppinsMedium,
               }}>
               Login
-            </Text>
+            </RNText>
           </View>
         </View>
       </View>
