@@ -1,18 +1,112 @@
-import React, {useState} from 'react';
-import {StyleSheet, SafeAreaView, StatusBar, View, Image} from 'react-native';
+import React, {useState, useEffect} from 'react';
+import {
+  StyleSheet,
+  SafeAreaView,
+  StatusBar,
+  View,
+  Image,
+  Text as RNText,
+} from 'react-native';
 import {COLORS} from '../../helper/colors';
-import {nh, nw} from '../../helper/scal.utils';
+import {nh, nw} from '../../helper/scales';
 import Text from '../../components/Text';
 import CustomTextInput from '../../components/TextInput';
 import Button from '../../components/Button';
 import {APP_FONTS} from '../../assets/fonts';
 import {images} from '../../assets/images';
 import {icons} from '../../assets/icons';
+import Routes from '../../helper/routes';
+import {isValidEmail} from '../../helper/commonFunctions';
 
-const SetNewPassword = ({navigation, route}) => {
+const SetNewPassword = ({navigation}) => {
+  const [form, setForm] = useState({
+    email: '',
+    code: '',
+    password: '',
+    confirmPassword: '',
+  });
+
+  const [errors, setErrors] = useState({
+    email: '',
+    code: '',
+    password: '',
+    confirmPassword: '',
+  });
+
+  const [resendTimer, setResendTimer] = useState(60);
+  const [isResendDisabled, setIsResendDisabled] = useState(false);
+
+  useEffect(() => {
+    let timer;
+    if (resendTimer > 0 && isResendDisabled) {
+      timer = setInterval(() => {
+        setResendTimer(prev => prev - 1);
+      }, 1000);
+    } else if (resendTimer === 0) {
+      setIsResendDisabled(false);
+      setResendTimer(60); // Reset timer
+    }
+
+    return () => clearInterval(timer);
+  }, [resendTimer, isResendDisabled]);
+
+  const handleResendClick = () => {
+    setIsResendDisabled(true);
+    setResendTimer(60);
+    console.log('Resend email logic triggered');
+    // Add resend email API call logic here
+  };
+
+  const handleInputChange = (field, value) => {
+    setForm({...form, [field]: value});
+
+    if (errors[field]) {
+      setErrors({...errors, [field]: ''});
+    }
+  };
+
+  const validateFields = () => {
+    let isValid = true;
+    const newErrors = {};
+
+    if (!form.email) {
+      newErrors.email = 'Email is required';
+      isValid = false;
+    } else if (!isValidEmail(form.email)) {
+      newErrors.email = 'Please Enter valid email address';
+      isValid = false;
+    }
+
+    if (!form.code) {
+      newErrors.code = 'Code is required';
+      isValid = false;
+    }
+
+    if (!form.password) {
+      newErrors.password = 'Password is required';
+      isValid = false;
+    } else if (form.password.length < 6) {
+      newErrors.password = 'Password must be at least 6 characters long';
+      isValid = false;
+    }
+
+    if (form.password !== form.confirmPassword) {
+      newErrors.confirmPassword = 'Password does not match';
+      isValid = false;
+    }
+
+    setErrors(newErrors);
+    return isValid;
+  };
+
+  const handleSubmit = () => {
+    if (validateFields()) {
+      console.log('Password reset successfully');
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
-      {/* StatusBar */}
       <StatusBar
         barStyle="dark-content"
         backgroundColor={COLORS.yellowF5BE00}
@@ -31,52 +125,61 @@ const SetNewPassword = ({navigation, route}) => {
           </Text>
 
           <CustomTextInput
+            placeholder="Email"
+            value={form.email}
+            onChangeText={value => handleInputChange('email', value)}
+            errorMessage={errors.email}
+          />
+
+          <CustomTextInput
+            placeholder="Code"
+            value={form.code}
+            onChangeText={value => handleInputChange('code', value)}
+            errorMessage={errors.code}
+          />
+
+          <View style={styles.resendContainer}>
+            <Text style={styles.resendText}>Didn’t receive the email? </Text>
+            {isResendDisabled ? (
+              <Text style={styles.timerText}>Resend in {resendTimer}s</Text>
+            ) : (
+              <RNText onPress={handleResendClick} style={styles.resendLink}>
+                Click to resend
+              </RNText>
+            )}
+          </View>
+
+          <CustomTextInput
             placeholder="Password"
-            errorMessage=""
+            value={form.password}
+            onChangeText={value => handleInputChange('password', value)}
+            errorMessage={errors.password}
             rightIcon={icons.hide}
           />
 
           <CustomTextInput
             placeholder="Confirm Password"
+            value={form.confirmPassword}
+            onChangeText={value => handleInputChange('confirmPassword', value)}
+            errorMessage={errors.confirmPassword}
             rightIcon={icons.hide}
           />
+          <View style={{marginBottom: nh(20)}} />
+          <Button text={'Reset password'} onPress={handleSubmit} />
 
-          <Button text={'Reset password'} />
-
-          <View
-            style={{
-              position: 'absolute',
-              bottom: 10, // Distance from the bottom
-              left: 0, // Full-width alignment
-              right: 0,
-              flexDirection: 'row',
-              justifyContent: 'center', // Centers content horizontally
-              alignItems: 'center', // Aligns items vertically
-            }}>
-            <Text
-              style={{
-                color: COLORS.grey999999,
-                fontSize: nh(12),
-                fontFamily: APP_FONTS.PoppinsMedium,
-              }}>
-              Back to{' '}
-            </Text>
-            <Text
-              style={{
-                color: COLORS.yellowF5BE00,
-                fontSize: nh(12),
-                fontFamily: APP_FONTS.PoppinsMedium,
-              }}>
+          <View style={styles.backToLogin}>
+            <Text style={styles.backToLoginText}>Back to </Text>
+            <RNText
+              onPress={() => navigation.navigate(Routes.Login)}
+              style={styles.loginLink}>
               Login
-            </Text>
+            </RNText>
           </View>
         </View>
       </View>
     </SafeAreaView>
   );
 };
-
-export default SetNewPassword;
 
 const styles = StyleSheet.create({
   container: {
@@ -101,11 +204,53 @@ const styles = StyleSheet.create({
     paddingHorizontal: nw(16),
     paddingTop: nh(30),
   },
-
   logo: {
     height: nh(150),
     width: nh(167),
     alignSelf: 'center',
     marginBottom: nh(30),
   },
+  resendContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    marginBottom: nh(10),
+  },
+  resendText: {
+    color: COLORS.grey999999,
+    fontSize: nh(12),
+    fontFamily: APP_FONTS.PoppinsMedium,
+  },
+  timerText: {
+    color: COLORS.redFF0000,
+    fontSize: nh(12),
+    fontFamily: APP_FONTS.PoppinsMedium,
+  },
+  resendLink: {
+    color: COLORS.yellowF5BE00,
+    fontSize: nh(12),
+    fontFamily: APP_FONTS.PoppinsMedium,
+    textDecorationLine: 'underline',
+  },
+  backToLogin: {
+    position: 'absolute',
+    bottom: 10,
+    left: 0,
+    right: 0,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  backToLoginText: {
+    color: COLORS.grey999999,
+    fontSize: nh(12),
+    fontFamily: APP_FONTS.PoppinsMedium,
+  },
+  loginLink: {
+    color: COLORS.yellowF5BE00,
+    fontSize: nh(12),
+    fontFamily: APP_FONTS.PoppinsMedium,
+  },
 });
+
+export default SetNewPassword;

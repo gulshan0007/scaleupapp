@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
   StyleSheet,
   SafeAreaView,
@@ -8,15 +8,30 @@ import {
   Text as RNText,
 } from 'react-native';
 import {COLORS} from '../../helper/colors';
-import {nh, nw} from '../../helper/scal.utils';
+import {nh, nw} from '../../helper/scales';
 import Text from '../../components/Text';
 import CustomTextInput from '../../components/TextInput';
 import Button from '../../components/Button';
 import {APP_FONTS} from '../../assets/fonts';
 import {images} from '../../assets/images';
 import Routes from '../../helper/routes';
+import {useToast} from '../../components/CustomToast';
+import {isValidEmail} from '../../helper/commonFunctions';
 
 const ForgotPassword = ({navigation, route}) => {
+  const {showToast} = useToast();
+  const [email, setEmail] = useState('');
+  const [emailErr, setEmailErr] = useState('');
+
+  const validation = () => {
+    if (email === '') {
+      setEmailErr('Please Enter email.');
+    } else if (!isValidEmail(email)) {
+      setEmailErr('Please Enter valid email address');
+    } else {
+      navigation.navigate(Routes.SetNewPassword);
+    }
+  };
   return (
     <SafeAreaView style={styles.container}>
       {/* StatusBar */}
@@ -37,12 +52,16 @@ const ForgotPassword = ({navigation, route}) => {
             Don’t worry! We’ll send you reset instructions
           </Text>
 
-          <CustomTextInput placeholder="Email" errorMessage="" />
-
-          <Button
-            text={'Reset password'}
-            onPress={() => navigation.navigate('Verification')}
+          <CustomTextInput
+            placeholder="Email"
+            onChangeText={val => {
+              setEmail(val);
+              if (emailErr) setEmailErr('');
+            }}
+            errorMessage={emailErr}
           />
+
+          <Button text={'Reset password'} onPress={validation} />
 
           <View
             style={{

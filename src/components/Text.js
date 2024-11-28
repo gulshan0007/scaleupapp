@@ -2,7 +2,7 @@ import React from 'react';
 // eslint-disable-next-line no-restricted-imports
 import { Text as RCAText, StyleProp, TextProps, TextStyle } from 'react-native';
 import { NativeText } from 'react-native/Libraries/Text/TextNativeComponent';
-import { nh, nw } from '../helper/scal.utils';
+import { nh, nw } from '../helper/scales';
 import { APP_FONTS } from '../assets/fonts';
 
 

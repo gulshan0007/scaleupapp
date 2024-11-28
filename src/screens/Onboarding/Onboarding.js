@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {View, StyleSheet, Image, TouchableOpacity, Alert} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import {DEVICE_HEIGHT, DEVICE_WIDTH, nh, nw} from '../../helper/scal.utils';
+import {DEVICE_HEIGHT, DEVICE_WIDTH, nh, nw} from '../../helper/scales';
 import {COLORS} from '../../helper/colors';
 import Text from '../../components/Text';
 import {images} from '../../assets/images';

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   StyleSheet,
   SafeAreaView,
@@ -9,7 +9,7 @@ import {
   Text as RNText,
 } from 'react-native';
 import {COLORS} from '../../helper/colors';
-import {nh, nw} from '../../helper/scal.utils';
+import {nh, nw} from '../../helper/scales';
 import Text from '../../components/Text';
 import CustomTextInput from '../../components/TextInput';
 import {icons} from '../../assets/icons';
@@ -22,76 +22,158 @@ import SquareToggle from '../../components/ToggleButton';
 import {useToast} from '../../components/CustomToast';
 import {getOtp, loginApi, verifyOtp} from '../../services/apiService';
 import Routes from '../../helper/routes';
-import Icon from '../../helper/icon';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useDispatch} from 'react-redux';
+import {actions} from '../../redux/reducers';
+import {isvalidMobileNumber} from '../../helper/commonFunctions';
 
 const Login = ({navigation}) => {
   const {showToast} = useToast();
-  const [selected, setSelected] = useState(0);
-  const [isChecked, setIsChecked] = useState(false);
-  const [requestedotp, setRequestedotp] = useState(false);
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [mobileNumber, setMobileNumber] = useState('');
-  const [secureTextEntry, setSecureTextEntry] = useState(true);
-  const [otp, setOtp] = useState('');
+  const dispatch = useDispatch();
+
+  const [state, setState] = useState({
+    selected: 0,
+    username: '',
+    password: '',
+    mobileNumber: '',
+    otp: '',
+    isChecked: false,
+    requestedOtp: false,
+    secureTextEntry: true,
+  });
+
+  const [errors, setErrors] = useState({
+    username: '',
+    password: '',
+    mobileNumber: '',
+    otp: '',
+  });
+
+  const [resendTimer, setResendTimer] = useState(60);
+  const [isResendDisabled, setIsResendDisabled] = useState(false);
+
+  useEffect(() => {
+    let timer;
+    if (resendTimer > 0 && isResendDisabled) {
+      timer = setInterval(() => {
+        setResendTimer(prev => prev - 1);
+      }, 1000);
+    } else if (resendTimer === 0) {
+      setIsResendDisabled(false);
+      setResendTimer(60); // Reset timer
+    }
+
+    return () => clearInterval(timer);
+  }, [resendTimer, isResendDisabled]);
+
+  const handleInputChange = (field, value) => {
+    setState(prev => ({...prev, [field]: value}));
+    if (errors[field]) {
+      setErrors(prev => ({...prev, [field]: ''}));
+    }
+  };
+
+  const handleResendClick = () => {
+    setIsResendDisabled(true);
+    setResendTimer(60);
+    console.log('Resend email logic triggered');
+    // Add resend email API call logic here
+  };
+
+  const toggleSecureEntry = () => {
+    setState(prev => ({...prev, secureTextEntry: !prev.secureTextEntry}));
+  };
 
   const onSelect = number => {
-    setSelected(number);
-    setRequestedotp(false);
+    setState({
+      ...state,
+      selected: number,
+      requestedOtp: false,
+      username: '',
+      password: '',
+      mobileNumber: '',
+      otp: '',
+    });
+    setErrors({
+      username: '',
+      password: '',
+      mobileNumber: '',
+      otp: '',
+    });
   };
 
-  const getOtpApi = async () => {
-    try {
-      const {data} = await getOtp({phoneNumber: username});
-      showToast({title: data?.message});
-    } catch (error) {
-      console.log('🚀 ~ getOtpApi ~ error:', error);
-    }
-  };
+  const validateFields = () => {
+    const newErrors = {};
+    let isValid = true;
 
-  const userLoginApi = async () => {
-    try {
-      const {data} = await loginApi({
-        loginIdentifier: username,
-        password: password,
-      });
-      showToast({title: data?.message});
-    } catch (error) {
-      console.log('🚀 ~ userLoginApi ~ error:', error);
-    }
-  };
-
-  const verifyOtpApi = async () => {
-    try {
-      const {data} = await verifyOtp({
-        phoneNumber: mobileNumber,
-        userOTP: otp,
-      });
-      showToast({title: data?.message});
-    } catch (error) {
-      console.log('🚀 ~ verifyOtpApi ~ error:', error);
-    }
-  };
-
-  const loginUser = () => {
-    if (selected == 0) {
-      if (!username) showToast({type: 'error', title: 'Please Enter UserName'});
-      else if (!username)
-        showToast({type: 'error', title: 'Please Enter Password'});
-      else userLoginApi();
+    if (state.selected === 0) {
+      if (!state.username) {
+        newErrors.username = 'Username/Email is required';
+        isValid = false;
+      }
+      if (!state.password) {
+        newErrors.password = 'Password is required';
+        isValid = false;
+      }
     } else {
-      if (requestedotp) {
-        if (!otp) showToast({type: 'error', title: 'Please Enter OTP'});
-        else verifyOtpApi();
-      } else {
-        if (!mobileNumber)
-          showToast({
-            type: 'error',
-            title: 'Phone number be valid phone number',
+      if (!state.mobileNumber) {
+        newErrors.mobileNumber = 'Mobile number is required';
+        isValid = false;
+      } else if (state.mobileNumber.length !== 10) {
+        newErrors.mobileNumber = 'Mobile number must be 10 digits';
+        isValid = false;
+      } else if (!isvalidMobileNumber(state.mobileNumber)) {
+        newErrors.mobileNumber = 'Enter valid Mobile number';
+        isValid = false;
+      }
+
+      if (state.requestedOtp && !state.otp) {
+        newErrors.otp = 'OTP is required';
+        isValid = false;
+      }
+    }
+
+    setErrors(newErrors);
+    return isValid;
+  };
+
+  const loginUser = async () => {
+    if (!validateFields()) return;
+
+    if (state.selected === 0) {
+      // Login with Username/Password
+      try {
+        const {data} = await loginApi({
+          loginIdentifier: state.username,
+          password: state.password,
+        });
+        showToast({type: 'success', title: data?.message});
+        const stringifiedUserData = JSON.stringify(data);
+        AsyncStorage.setItem('userData', stringifiedUserData);
+        dispatch(actions.setUserData(stringifiedUserData));
+        navigation.navigate(Routes.Home);
+      } catch (error) {
+        console.log('Login Error:', error);
+      }
+    } else {
+      // Login with Mobile Number and OTP
+      if (state.requestedOtp) {
+        try {
+          const {data} = await verifyOtp({
+            phoneNumber: state.mobileNumber,
+            userOTP: state.otp,
           });
-        else {
-          getOtpApi();
-          setRequestedotp(true);
+          showToast({type: 'success', title: data?.message});
+        } catch (error) {
+          console.log('Verify OTP Error:', error);
+        }
+      } else {
+        try {
+          const {data} = await getOtp({phoneNumber: state.mobileNumber});
+          showToast({type: 'success', title: data?.message});
+          setState(prev => ({...prev, requestedOtp: true}));
+        } catch (error) {
+          console.log('Get OTP Error:', error);
         }
       }
     }
@@ -118,26 +200,29 @@ const Login = ({navigation}) => {
             style={{marginBottom: nh(30)}}>
             Login now
           </Text>
+
           <SquareToggle
             options={['Username', 'Mobile No']}
-            selected={selected}
-            onToggle={number => onSelect(number)}
+            selected={state.selected}
+            onToggle={onSelect}
           />
-          {selected == 0 && (
+
+          {state.selected === 0 && (
             <>
               <CustomTextInput
                 placeholder="Username/Email"
-                value={username}
-                onChangeText={setUsername}
-                errorMessage=""
+                value={state.username}
+                onChangeText={value => handleInputChange('username', value)}
+                errorMessage={errors.username}
               />
               <CustomTextInput
                 placeholder="Password"
-                value={password}
-                onChangeText={setPassword}
-                rightIcon={secureTextEntry ? icons.hide : icons.unhide}
-                onRightIconPress={() => setSecureTextEntry(!secureTextEntry)}
-                secureTextEntry={secureTextEntry}
+                value={state.password}
+                onChangeText={value => handleInputChange('password', value)}
+                secureTextEntry={state.secureTextEntry}
+                rightIcon={state.secureTextEntry ? icons.hide : icons.unhide}
+                onRightIconPress={toggleSecureEntry}
+                errorMessage={errors.password}
               />
               <View style={styles.rememberContainer}>
                 <View style={styles.checkboxContainer}>
@@ -145,8 +230,10 @@ const Login = ({navigation}) => {
                     checkedIcon="check-box"
                     uncheckedIcon="check-box-outline-blank"
                     iconType="material"
-                    checked={isChecked}
-                    onPress={() => setIsChecked(!isChecked)}
+                    checked={state.isChecked}
+                    onPress={() =>
+                      setState(prev => ({...prev, isChecked: !prev.isChecked}))
+                    }
                     containerStyle={styles.checkboxStyle}
                     checkedColor={COLORS.grey999999}
                     uncheckedColor={COLORS.grey999999}
@@ -167,25 +254,38 @@ const Login = ({navigation}) => {
               </View>
             </>
           )}
-          {selected == 1 && (
+
+          {state.selected === 1 && (
             <>
               <CustomTextInput
                 placeholder="Mobile No"
-                value={mobileNumber}
-                onChangeText={setMobileNumber}
-                errorMessage=""
+                value={state.mobileNumber}
+                onChangeText={value => handleInputChange('mobileNumber', value)}
                 keyboardType="number-pad"
+                errorMessage={errors.mobileNumber}
+                maxLength={10}
               />
-              {requestedotp && (
+              {state.requestedOtp && (
                 <>
                   <CustomTextInput
                     placeholder="OTP"
-                    value={otp}
-                    onChangeText={setOtp}
+                    value={state.otp}
+                    onChangeText={value => handleInputChange('otp', value)}
+                    errorMessage={errors.otp}
                   />
-                  <View style={styles.otpResendContainer}>
-                    <Text style={styles.otpText}>Didn’t receive OTP? </Text>
-                    <Text style={styles.resendText}>Resend Code</Text>
+                  <View style={styles.resendContainer}>
+                    <Text style={styles.resendText}>Didn’t receive OTP? </Text>
+                    {isResendDisabled ? (
+                      <Text style={styles.timerText}>
+                        Resend in {resendTimer}s
+                      </Text>
+                    ) : (
+                      <RNText
+                        onPress={handleResendClick}
+                        style={styles.resendLink}>
+                        Click to resend
+                      </RNText>
+                    )}
                   </View>
                 </>
               )}
@@ -193,10 +293,15 @@ const Login = ({navigation}) => {
           )}
 
           <Button
-            text={selected == 0 || requestedotp ? 'Login' : 'Request OTP'}
+            text={
+              state.selected === 0 || state.requestedOtp
+                ? 'Login'
+                : 'Request OTP'
+            }
             onPress={loginUser}
           />
           <SocialLogin />
+
           <View style={styles.signupContainer}>
             <Text style={styles.signupText}>Don’t have an account! </Text>
             <RNText
@@ -257,23 +362,6 @@ const styles = StyleSheet.create({
     margin: 0,
     marginRight: nw(5),
   },
-  otpResendContainer: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-    marginBottom: nh(50),
-  },
-  otpText: {
-    color: COLORS.grey999999,
-    fontSize: nh(12),
-    fontFamily: APP_FONTS.PoppinsMedium,
-  },
-  resendText: {
-    color: COLORS.yellowF5BE00,
-    fontSize: nh(12),
-    fontFamily: APP_FONTS.PoppinsMedium,
-    textDecorationLine: 'underline',
-  },
   signupContainer: {
     position: 'absolute',
     bottom: 10,
@@ -292,5 +380,27 @@ const styles = StyleSheet.create({
     color: COLORS.yellowF5BE00,
     fontSize: nh(12),
     fontFamily: APP_FONTS.PoppinsMedium,
+  },
+  resendContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    marginBottom: nh(10),
+  },
+  resendText: {
+    color: COLORS.grey999999,
+    fontSize: nh(12),
+    fontFamily: APP_FONTS.PoppinsMedium,
+  },
+  timerText: {
+    color: COLORS.redFF0000,
+    fontSize: nh(12),
+    fontFamily: APP_FONTS.PoppinsMedium,
+  },
+  resendLink: {
+    color: COLORS.yellowF5BE00,
+    fontSize: nh(12),
+    fontFamily: APP_FONTS.PoppinsMedium,
+    textDecorationLine: 'underline',
   },
 });

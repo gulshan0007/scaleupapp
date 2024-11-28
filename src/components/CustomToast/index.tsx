@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, {createContext, useContext, useState} from 'react';
 import Toast from './Toast';
 
 interface ToastMessage {
@@ -20,7 +20,7 @@ export const useToast = () => {
   return context;
 };
 
-export const ToastProvider: React.FC = ({ children }) => {
+export const ToastProvider: React.FC = ({children}) => {
   const [toastVisible, setToastVisible] = useState<boolean>(false);
   const [toastMessage, setToastMessage] = useState<ToastMessage | null>(null);
 
@@ -29,11 +29,11 @@ export const ToastProvider: React.FC = ({ children }) => {
     setToastVisible(true);
     setTimeout(() => {
       setToastVisible(false);
-    }, 2000);
+    }, 1500);
   };
 
   return (
-    <ToastContext.Provider value={{ showToast }}>
+    <ToastContext.Provider value={{showToast}}>
       {children}
       {toastVisible && <Toast visible={toastVisible} message={toastMessage!} />}
     </ToastContext.Provider>

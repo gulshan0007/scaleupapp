@@ -2,7 +2,7 @@ import React from 'react';
 import {TouchableOpacity, Text, StyleSheet, View, Image} from 'react-native';
 import {COLORS} from '../helper/colors';
 import {APP_FONTS} from '../assets/fonts';
-import {DEVICE_WIDTH, nh, nw} from '../helper/scal.utils';
+import {DEVICE_WIDTH, nh, nw} from '../helper/scales';
 // import { Ionicons } from '@expo/vector-icons'; // Replace with your icon library if needed.
 
 const Button = ({
