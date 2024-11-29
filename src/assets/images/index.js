@@ -15,4 +15,9 @@ export const images = {
   preference1: require('../images/preference1.png'),
   preference2: require('../images/preference2.png'),
   preference3: require('../images/preference3.png'),
+  preference: require('../images/preference.png'),
+  education: require('../images/education.png'),
+  work: require('../images/work.png'),
+  certification: require('../images/certification.png'),
+  project: require('../images/project.png'),
 };

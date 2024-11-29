@@ -18,11 +18,13 @@ const Button = ({
   height = 50, // Default height
   width = DEVICE_WIDTH - 32, // Default width
   textStyle = {},
+  disabled = false,
 }) => {
   const isSolid = variant === 'solid';
 
   return (
     <TouchableOpacity
+      disabled={disabled}
       style={[
         styles.button,
         {

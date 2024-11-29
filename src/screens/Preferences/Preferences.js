@@ -154,8 +154,8 @@ const Preferences = ({navigation, route}) => {
         backgroundColor={COLORS.yellowF5BE00}
       />
       <Header
-        title="My Screen"
-        // onBackPress={handleBackPress}
+        title="Preferences"
+        onBackPress={() => navigation.goBack()}
         onRightIconPress={() => setVisible(true)}
       />
 

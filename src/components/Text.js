@@ -48,6 +48,13 @@ const useTextVariants = () => {
             letterSpacing: nw(0.3),
             fontWeight: '600',
         },
+        semibold16: {
+            fontSize: nh(16),
+            fontFamily: APP_FONTS.PoppinsSemiBold,
+            lineHeight: nh(24),
+            letterSpacing: nw(0.3),
+            fontWeight: '600',
+        },
 
         semibold18: {
             fontSize: nh(18),
