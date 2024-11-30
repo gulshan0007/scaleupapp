@@ -8,9 +8,10 @@ import {
 } from 'react-native';
 import {COLORS} from '../helper/colors';
 import {icons} from '../assets/icons';
-import {nh, nw} from '../helper/scal.utils';
+
 import Entypo from 'react-native-vector-icons/Entypo';
 import Text from './Text';
+import {nh, nw} from '../helper/scales';
 
 const Header = ({
   title = 'Header Title', // Default title

@@ -7,15 +7,12 @@ import {
   TouchableOpacity,
   Image,
 } from 'react-native';
-import {nh, nw} from '../helper/scal.utils';
+import {nh, nw} from '../helper/scales';
 import {COLORS} from '../helper/colors';
 import {APP_FONTS} from '../assets/fonts';
-import {icons} from '../assets/icons';
 
 const CustomTextInput = ({
   placeholder = 'Enter text', // Placeholder text
-  value,
-  onChangeText,
   errorMessage = '', // Error message (icon + text)
   successMessage = '', // Success message (icon + text)
   rightIcon, // Component for the right-side icon
@@ -27,6 +24,8 @@ const CustomTextInput = ({
   label = '',
   textinputType = '',
   width = '',
+  height = 40,
+  ...props
 }) => {
   const [selectedCountry, setSelectedCountry] = useState({
     name: 'India',
@@ -52,10 +51,13 @@ const CustomTextInput = ({
           styles.inputContainer,
           {
             marginBottom: marginBottom,
-            height: textinputType == 'L' ? nh(150) : nh(40),
+            height: textinputType == 'L' ? nh(150) : nh(height),
           },
           width && {
             width: width,
+            borderColor: errorMessage
+              ? COLORS.redEA4335
+              : 'rgba(214, 214, 214, 0.2)',
           },
         ]}>
         {/* Country Dropdown */}
@@ -73,11 +75,8 @@ const CustomTextInput = ({
             {height: textinputType == 'L' ? nh(150) : nh(40)},
           ]}
           placeholder={placeholder}
-          value={value}
-          onChangeText={onChangeText}
           placeholderTextColor={COLORS.grey999999}
-          secureTextEntry={secureTextEntry}
-          keyboardType={keyboardType}
+          {...props}
         />
         {rightIcon && (
           <TouchableOpacity onPress={onRightIconPress}>
@@ -123,7 +122,7 @@ const styles = StyleSheet.create({
   },
 
   errorMessage: {
-    marginTop: -5,
+    marginTop: -10,
     color: COLORS.redEA4335,
     fontSize: nh(12),
     fontFamily: APP_FONTS.PoppinsMedium,
@@ -132,7 +131,7 @@ const styles = StyleSheet.create({
   },
 
   successMessage: {
-    marginTop: -5,
+    marginTop: -10,
     color: COLORS.green34A853,
     fontSize: nh(12),
     fontFamily: APP_FONTS.PoppinsSemiBold,

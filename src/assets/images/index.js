@@ -20,4 +20,6 @@ export const images = {
   work: require('../images/work.png'),
   certification: require('../images/certification.png'),
   project: require('../images/project.png'),
+  ellipse: require('../images/Ellipse.png'),
+  notification: require('../images/notification.png'),
 };

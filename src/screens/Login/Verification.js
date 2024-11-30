@@ -8,12 +8,13 @@ import {
   Text as RNText,
 } from 'react-native';
 import {COLORS} from '../../helper/colors';
-import {nh, nw} from '../../helper/scal.utils';
+import {nh, nw} from '../../helper/scales';
 import Text from '../../components/Text';
 import CustomTextInput from '../../components/TextInput';
 import Button from '../../components/Button';
 import {APP_FONTS} from '../../assets/fonts';
 import {images} from '../../assets/images';
+import Routes from '../../helper/routes';
 
 const Verification = ({navigation, route}) => {
   return (
@@ -89,7 +90,7 @@ const Verification = ({navigation, route}) => {
               Back to{' '}
             </Text>
             <RNText
-              onPress={() => navigation.navigate('Login')}
+              onPress={() => navigation.navigate(Routes.Login)}
               style={{
                 color: COLORS.yellowF5BE00,
                 fontSize: nh(12),

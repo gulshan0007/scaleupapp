@@ -1,7 +1,7 @@
 import React from 'react';
 import {StyleSheet, SafeAreaView, StatusBar, View} from 'react-native';
 import {COLORS} from '../../helper/colors';
-import {nh, nw} from '../../helper/scal.utils';
+import {nh, nw} from '../../helper/scales';
 import Header from '../../components/Header';
 
 const Preferences = ({navigation, route}) => {

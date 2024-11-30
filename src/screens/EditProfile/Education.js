@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {StyleSheet, SafeAreaView, StatusBar, View} from 'react-native';
 import {COLORS} from '../../helper/colors';
-import {DEVICE_WIDTH, nh, nw} from '../../helper/scal.utils';
+import {DEVICE_WIDTH, nh, nw} from '../../helper/scales';
 import Header from '../../components/Header';
 import CustomTextInput from '../../components/TextInput';
 import {CheckBox} from 'react-native-elements';

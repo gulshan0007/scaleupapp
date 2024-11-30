@@ -9,7 +9,7 @@ import {
   Image,
 } from 'react-native';
 import {COLORS} from '../../helper/colors';
-import {DEVICE_WIDTH, nh, nw} from '../../helper/scal.utils';
+import {DEVICE_WIDTH, nh, nw} from '../../helper/scales';
 import Header from '../../components/Header';
 import Text from '../../components/Text';
 import {images} from '../../assets/images';
@@ -160,7 +160,7 @@ const Preferences = ({navigation, route}) => {
       />
 
       <Modal
-        visible={visible}
+        isVisible={visible}
         animationType="fade"
         transparent={true}
         style={{
@@ -174,7 +174,7 @@ const Preferences = ({navigation, route}) => {
         <View
           style={{
             backgroundColor: COLORS.whiteFFFFFF,
-
+            flex: 1,
             width: nw(250),
             height: nh(187),
             padding: 16,
@@ -187,7 +187,6 @@ const Preferences = ({navigation, route}) => {
               renderItem={renderMenuItem}
               keyExtractor={item => item.id.toString()}
             />
-            {/* Close Button */}
           </View>
         </View>
       </Modal>

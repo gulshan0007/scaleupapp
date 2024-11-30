@@ -10,7 +10,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import {COLORS} from '../../helper/colors';
-import {DEVICE_WIDTH, nh, nw} from '../../helper/scal.utils';
+import {DEVICE_WIDTH, nh, nw} from '../../helper/scales';
 import Header from '../../components/Header';
 import SquareToggle from '../../components/ToggleButton';
 import Text from '../../components/Text';
@@ -69,7 +69,7 @@ const EditProfile = ({navigation, route}) => {
         title="Edit Profile"
         // backIcon={icons.backArrow} // Provide your back arrow icon
         // rightIcon={icons.menu} // Provide your right icon
-        // onBackPress={handleBackPress}
+        onBackPress={() => navigation.goBack()}
         // onRightIconPress={handleRightIconPress}
       />
       <View style={styles.layer1}>
