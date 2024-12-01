@@ -19,6 +19,12 @@ const CustomTextInput = ({
   onRightIconPress = () => {}, // Callback for right icon press
   marginBottom = 15,
   dropDown = false,
+  secureTextEntry = false,
+  keyboardType = 'default',
+  label = '',
+  textinputType = '',
+  width = '',
+  height = 40,
   ...props
 }) => {
   const [selectedCountry, setSelectedCountry] = useState({
@@ -29,11 +35,26 @@ const CustomTextInput = ({
   return (
     <View>
       {/* Input field */}
+      {label && (
+        <Text
+          style={{
+            fontSize: 14,
+            fontFamily: APP_FONTS.PoppinsMedium,
+            color: COLORS.greyBBBBBB,
+            marginBottom: 5,
+          }}>
+          {label}
+        </Text>
+      )}
       <View
         style={[
           styles.inputContainer,
           {
             marginBottom: marginBottom,
+            height: textinputType == 'L' ? nh(150) : nh(height),
+          },
+          width && {
+            width: width,
             borderColor: errorMessage
               ? COLORS.redEA4335
               : 'rgba(214, 214, 214, 0.2)',
@@ -49,7 +70,10 @@ const CustomTextInput = ({
           </TouchableOpacity>
         )}
         <TextInput
-          style={styles.input}
+          style={[
+            styles.input,
+            {height: textinputType == 'L' ? nh(150) : nh(40)},
+          ]}
           placeholder={placeholder}
           placeholderTextColor={COLORS.grey999999}
           {...props}

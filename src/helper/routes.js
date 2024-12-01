@@ -9,6 +9,7 @@ const Routes = {
   SetNewPassword: 'SetNewPassword',
   BasicDetails: 'BasicDetails',
   Home: 'Home',
+  Notifications: 'Notifications',
 };
 
 export default Routes;

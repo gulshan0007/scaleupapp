@@ -103,7 +103,7 @@ const Icon = ({
       disabled={onPress ? false : true}
       onPress={onPress}
       style={style}>
-      <IconComponent name={name} size={size} color={color} />
+      <IconComponent name={name} size={size} color={color} type={type}/>
     </Pressable>
   );
 };

@@ -304,7 +304,9 @@ const Login = ({navigation}) => {
           <View style={styles.signupContainer}>
             <Text style={styles.signupText}>Don’t have an account! </Text>
             <RNText
-              onPress={() => navigation.navigate(Routes.SignUp)}
+              //   onPress={() => navigation.navigate('SignUp')}
+              onPress={() => navigation.navigate('Home')}
+              //   Preferences
               style={styles.signupLink}>
               Sign up
             </RNText>

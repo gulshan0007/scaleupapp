@@ -66,7 +66,10 @@ const Verification = ({navigation, route}) => {
             </Text>
           </View>
 
-          <Button text={'Reset password'} />
+          <Button
+            text={'Reset password'}
+            onPress={() => navigation.navigate('SetNewPassword')}
+          />
 
           <View
             style={{

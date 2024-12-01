@@ -11,9 +11,16 @@ import SignUp from './screens/Signup/Signup';
 import Login from './screens/Login/Login';
 import ForgotPassword from './screens/Login/ForgotPassword';
 import Verification from './screens/Login/Verification';
+import Preferences from './screens/Preferences/Preferences';
+import EditProfile from './screens/EditProfile/EditProfile';
+import WorkExperience from './screens/EditProfile/WorkExperience';
+import Education from './screens/EditProfile/Education';
+import Certifications from './screens/EditProfile/Certifications';
+import Projects from './screens/EditProfile/Projects';
 import SetNewPassword from './screens/Login/SetNewPassword';
 import Home from './screens/Home/Home';
 import BasicDetails from './screens/Signup/BasicDetails';
+import Notifications from './screens/Notification/Notification';
 
 const Stack = createNativeStackNavigator();
 const LoginStack = createNativeStackNavigator();
@@ -58,6 +65,37 @@ const LoginNavigator = ({route}) => {
         options={{headerShown: false}}
       />
       <LoginStack.Screen
+        name={'Preferences'}
+        component={Preferences}
+        options={{headerShown: false}}
+      />
+
+      <LoginStack.Screen
+        name={'EditProfile'}
+        component={EditProfile}
+        options={{headerShown: false}}
+      />
+      <LoginStack.Screen
+        name={'WorkExperience'}
+        component={WorkExperience}
+        options={{headerShown: false}}
+      />
+      <LoginStack.Screen
+        name={'Education'}
+        component={Education}
+        options={{headerShown: false}}
+      />
+      <LoginStack.Screen
+        name={'Certifications'}
+        component={Certifications}
+        options={{headerShown: false}}
+      />
+      <LoginStack.Screen
+        name={'Projects'}
+        component={Projects}
+        options={{headerShown: false}}
+      />
+      <LoginStack.Screen
         name={Routes.SetNewPassword}
         component={SetNewPassword}
         options={{headerShown: false}}
@@ -89,6 +127,11 @@ export const RootNavigator = () => {
       <Stack.Screen
         name={Routes.Home}
         component={Home}
+        options={{headerShown: false}}
+      />
+      <LoginStack.Screen
+        name={Routes.Notifications}
+        component={Notifications}
         options={{headerShown: false}}
       />
     </Stack.Navigator>
