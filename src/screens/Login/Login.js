@@ -60,7 +60,7 @@ const Login = ({navigation}) => {
       }, 1000);
     } else if (resendTimer === 0) {
       setIsResendDisabled(false);
-      setResendTimer(60); // Reset timer
+      setResendTimer(59); // Reset timer
     }
 
     return () => clearInterval(timer);
@@ -75,9 +75,8 @@ const Login = ({navigation}) => {
 
   const handleResendClick = () => {
     setIsResendDisabled(true);
-    setResendTimer(60);
-    console.log('Resend email logic triggered');
-    // Add resend email API call logic here
+    setResendTimer(59);
+    loginUser();
   };
 
   const toggleSecureEntry = () => {

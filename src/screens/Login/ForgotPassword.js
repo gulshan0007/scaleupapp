@@ -17,6 +17,7 @@ import {images} from '../../assets/images';
 import Routes from '../../helper/routes';
 import {useToast} from '../../components/CustomToast';
 import {isValidEmail} from '../../helper/commonFunctions';
+import {otpPassword} from '../../services/apiService';
 
 const ForgotPassword = ({navigation, route}) => {
   const {showToast} = useToast();
@@ -29,9 +30,20 @@ const ForgotPassword = ({navigation, route}) => {
     } else if (!isValidEmail(email)) {
       setEmailErr('Please Enter valid email address');
     } else {
-      navigation.navigate(Routes.SetNewPassword);
+      sendOtpToEmail();
     }
   };
+
+  const sendOtpToEmail = async () => {
+    try {
+      const {data} = await otpPassword({loginIdentifier: email});
+      showToast({type: 'success', title: data?.message});
+      navigation.navigate(Routes.SetNewPassword, {email: email});
+    } catch (error) {
+      console.log('Get OTP Error:', error);
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       {/* StatusBar */}
